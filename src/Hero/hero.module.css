@@ -1,0 +1,15 @@
+.herotext{
+  
+   display: flex;
+   color: #970747;
+   flex-direction: column;
+   font-weight: bold;
+}
+
+@media screen and (min-width:1200px) {
+    .herotext{
+        padding-top: 80px;
+    }
+    
+}
+

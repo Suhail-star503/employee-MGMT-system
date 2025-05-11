@@ -1,0 +1,23 @@
+
+ul li {
+    list-style-type: none;
+    margin-right: 30px;
+    position: relative;
+    top: 10px;
+    display:none;
+    margin-left: 40px;
+    color: white;
+    
+}
+ul li a {
+    text-decoration: none;
+    color: white;
+}
+@media screen and (min-width:992px) {
+    .custom{
+        display: none;
+    }
+    ul li {
+        display: block;
+    }
+}

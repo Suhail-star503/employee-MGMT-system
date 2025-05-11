@@ -1,0 +1,57 @@
+.register{
+    width: 70%;
+    margin: auto;
+    background-color: pink;
+    height: auto;
+    padding: 20px;
+}
+.salary{
+    height:60px;
+    background-color:green;
+    padding-top: 50px;
+    padding-bottom: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 0.8rem;
+    margin-top: 10px;
+    margin-left:auto;
+    margin-right:auto;
+    flex-direction: column;
+    gap: 5px;
+    color: white;
+}
+.task{
+    
+    
+    border-radius:0.8rem;
+    margin-top:10px;
+    margin-left:auto;
+    color: white;
+    padding:20px;
+    
+    margin-right:auto
+}
+.profile{
+    
+    background-color:#970747;
+    border-radius:0.8rem;
+    margin-top:10px;
+    margin-left:auto;
+    color: white;
+    padding:20px;
+    
+    margin-right:auto
+}
+@media screen and (max-width:530px) {
+    .register{
+        width: 98%;
+
+    }
+}
+@media screen and (min-width:992px) {
+    .salary{
+        margin-top: 150px;
+
+    }
+}
