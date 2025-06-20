@@ -3,7 +3,7 @@ import Navbar from '../Navbar/navbar';
 import { useLocation } from 'react-router-dom';
 import { formatTimestamp } from './employeedeshboard';
 import { Link } from 'react-router-dom';
-
+import Style from './style.module.css';
 import { db } from '../firebase';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
@@ -64,14 +64,14 @@ const Allemp = (props) => {
     return (
         <div>
             <Navbar signin={props.signin} setsignin={props.setsignin} />
-            <div className="container py-4">
+            <div className="container py-4" style={{ marginTop: "200px" }}>
                 <div className="row">
 
                     {allemployees.length === 0 ? (
                         <div className="col-11" style={{ paddingTop: "30px" }}>
                             <div style={{ width: "18rem", margin: "auto" }}>
-                                <img src="https://static.vecteezy.com/system/resources/previews/004/968/515/original/no-file-or-data-found-in-the-folder-concept-illustration-flat-design-eps10-simple-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.jpg" className="img-fluid" alt=""></img>
-                                <h4 style={{ textAlign: "center" }}>Employees not found</h4>
+                                <img src="https://static.vecteezy.com/system/resources/previews/004/968/515/original/no-file-or-data-found-in-the-folder-concept-illustration-flat-design-eps10-simple-modern-graphic-element-for-landing-page-empty-state-ui-infographic-icon-vector.jpg" className="img-fluid" alt="" style={{borderRadius:"50%"}}></img>
+                                <h4 style={{ textAlign: "center" ,color:"white"}}>Employees not found</h4>
                             </div>
                         </div>
                     ) :
@@ -81,8 +81,8 @@ const Allemp = (props) => {
                                 className="col-11  col-md-6 col-lg-4 mb-4"
                             >
                                 <div
-                                    className="card h-100 shadow-sm"
-                                    style={{ backgroundColor: "#970747", borderRadious: "10x", color: "white", paddingTop: "20px", paddingBottom: "20px" }}
+                                    className={`card h-100 shadow-sm ${Style.all}`}
+                                    style={{ borderRadious: "10x", color: "white", paddingTop: "20px", paddingBottom: "20px" }}
                                 >
                                     <div className="card-body">
                                         <h5 className="card-title" style={{ textAlign: "center", marginBottom: "20px" }}>{emp.name}</h5>

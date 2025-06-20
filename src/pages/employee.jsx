@@ -9,6 +9,7 @@ import { ImProfile } from "react-icons/im";
 import { collection, addDoc, query, where, } from "firebase/firestore";
 import { getDocs, updateDoc } from "firebase/firestore";
 import { deleteDoc } from 'firebase/firestore';
+import Style from './style.module.css';
 
 export const deletetask = async (taskId, setTaskState) => {
     try {
@@ -218,10 +219,10 @@ const Employee = (props) => {
             <div className="container">
                 <div className="row">
                     <div
-                        className="col-11"
+                        className={`col-12 ${Style.all}`}
                         style={{
 
-                            backgroundColor: '#970747',
+                            
                             margin: 'auto',
                             borderRadius: '0.8rem',
                             padding: '20px',
@@ -252,26 +253,26 @@ const Employee = (props) => {
 
                 </div>
                 <div className="row">
-                    <div className="col-10" style={{ height: "200px", backgroundColor: "green", marginTop: "30px", borderRadius: "0.8rem", marginLeft: "auto", marginRight: "auto", paddingTop: "25px" }}>
+                    <div className={`col-10 ${Style.all}`} style={{ height: "200px", marginTop: "30px", borderRadius: "0.8rem", marginLeft: "auto", marginRight: "auto", paddingTop: "25px" }}>
                         <h3 style={{ textAlign: "center", color: "white", marginBottom: "20px" }}>Set or update salary</h3>
                         <form onSubmit={handleset}>
                             <input type="number" className="form-control" placeholder='Enter amount' name='amount' required />
-                            <button className='btn btn-primary' type='submit' style={{ marginTop: "20px" }}>Submit</button>
+                            <button className='btn' type='submit' style={{ marginTop: "20px",backgroundColor:"black",color:"white" }}>Submit</button>
                         </form>
                     </div>
                 </div>
 
                 <div className="row">
-                    <div className="col-10 bg-primary" style={{ height: "200px", marginTop: "30px", borderRadius: "0.8rem", marginLeft: "auto", marginRight: "auto", paddingTop: "25px" }}>
+                    <div className={`col-10 ${Style.all}`} style={{ height: "200px", marginTop: "30px", borderRadius: "0.8rem", marginLeft: "auto", marginRight: "auto", paddingTop: "25px" }}>
                         <h3 style={{ textAlign: "center", color: "white", marginBottom: "20px" }}>Give task</h3>
                         <form onSubmit={handletask}>
                             <input type="text" className="form-control" placeholder='Task' name='task' required />
-                            <button className='btn btn-warning' type='submit' style={{ marginTop: "20px" }}>Submit</button>
+                            <button className='btn' type='submit' style={{ marginTop: "20px",backgroundColor:"black",color:"white" }}>Submit</button>
                         </form>
                     </div>
                 </div>
                 <div className="row">
-                    <div className="col-11 bg-primary" style={{ marginTop: "30px", borderRadius: "0.8rem", marginLeft: "auto", marginRight: "auto", paddingTop: "25px", paddingBottom: "20px" }}>
+                    <div className={`col-11 ${Style.all}`} style={{ marginTop: "30px", borderRadius: "0.8rem", marginLeft: "auto", marginRight: "auto", paddingTop: "25px", paddingBottom: "20px" }}>
                         <h3 style={{ textAlign: "center", color: "white", marginBottom: "20px" }}>Given task</h3>
                         {task.length === 0 ? (
                             <p style={{ color: 'white', textAlign: 'center' }}>No task assigned.</p>

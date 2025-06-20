@@ -94,7 +94,7 @@ const Employeedeshboard = (props) => {
 
   return (
     <div>
-      <div className='container'>
+      <div className='container' style={{marginTop:"100px",paddingBottom:"100px"}}>
         <div className="row">
           <div className={`col-11 col-lg-5 ${Style.salary}`}>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -123,7 +123,7 @@ const Employeedeshboard = (props) => {
               <p><b>Joined</b> : {companyJoinDate}</p>
             </div>
           </div>
-          <div className={`col-11 col-lg-5 bg-primary ${Style.task}`}>
+          <div className={`col-11 col-lg-5  ${Style.task}`}>
             <h2 style={{ textAlign: "center", marginBottom: "20px", marginTop: "10px", color: "white" }}>Your task <MdTask /></h2>
 
             {task.length === 0 ? (

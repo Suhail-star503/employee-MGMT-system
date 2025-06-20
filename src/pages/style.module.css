@@ -1,13 +1,19 @@
 .register{
     width: 70%;
-    margin: auto;
-    background-color: pink;
+    margin: 100px auto;
+    background-image: linear-gradient(rgb(27, 88, 68), rgb(0, 184, 117));
+    border-radius: 20px;
+    margin-top: 50px;
     height: auto;
     padding: 20px;
+    
+}
+.all{
+    background-image: linear-gradient(rgb(27, 88, 68), rgb(0, 184, 117));
 }
 .salary{
     height:60px;
-    background-color:green;
+    background-image: linear-gradient(rgb(27, 88, 68), rgb(0, 184, 117));
     padding-top: 50px;
     padding-bottom: 50px;
     display: flex;
@@ -25,6 +31,7 @@
     
     
     border-radius:0.8rem;
+    background-image: linear-gradient(rgb(27, 88, 68), rgb(0, 184, 117));
     margin-top:10px;
     margin-left:auto;
     color: white;
@@ -34,7 +41,7 @@
 }
 .profile{
     
-    background-color:#970747;
+    background-image: linear-gradient(rgb(27, 88, 68), rgb(0, 184, 117));
     border-radius:0.8rem;
     margin-top:10px;
     margin-left:auto;
@@ -43,11 +50,18 @@
     
     margin-right:auto
 }
+.login{
+    background-image: linear-gradient(rgb(27, 88, 68), rgb(0, 184, 117));
+    color: white;
+}
 @media screen and (max-width:530px) {
     .register{
         width: 98%;
 
     }
+}
+.total{
+    background-image: linear-gradient(rgb(27, 88, 68), rgb(0, 184, 117));
 }
 @media screen and (min-width:992px) {
     .salary{

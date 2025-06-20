@@ -20,10 +20,10 @@ const Admindashboard = (props) => {
 
   return (
     <div>
-      <div className="container">
+      <div className="container" style={{marginTop:"150px", paddingBottom: "100px"}}>
         <div className="row">
 
-        <div className={`col-11 col-lg-5 ${Style.salary}`} style={{ paddingTop: "80px", paddingBottom: "100px" }}>
+        <div className={`col-11 col-lg-5 ${Style.salary }`} style={{ paddingTop: "80px", paddingBottom: "100px" }}>
             <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
               <span><h3>Employees data <MdManageAccounts style={{ fontSize: "52px" }} /></h3></span>
             </div>
@@ -32,7 +32,7 @@ const Admindashboard = (props) => {
             }</h4>
             <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
               <Link to={'employeedata'} state={{ allemployees: props.allemployees }}>
-              <button className='btn' style={{backgroundColor:'#970747',color:"white"}}>Click to know more</button>
+              <button className='btn' style={{backgroundColor:'black',color:"white"}}>Click to know more</button>
               </Link>
             </div>
           </div>
@@ -47,7 +47,7 @@ const Admindashboard = (props) => {
           </div>
         </div>
         <div className="row">
-          <div className="col-11 bg-primary" style={{ marginTop: "30px", borderRadius: "0.8rem", color: "white", padding: "10px", marginLeft: "auto", marginRight: "auto", paddingTop: "20px" }}>
+          <div className={`col-11 ${Style.total}`} style={{ marginTop: "30px", borderRadius: "0.8rem", color: "white", padding: "10px", marginLeft: "auto", marginRight: "auto", paddingTop: "20px" }}>
             <h1 style={{ textAlign: 'center' }}>Total amount of salary</h1>
             <div style={{ width: "200px", marginLeft: "auto", marginRight: "auto", marginTop: "20px" }}>
               <span>

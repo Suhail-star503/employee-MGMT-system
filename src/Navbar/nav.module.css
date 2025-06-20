@@ -1,14 +1,23 @@
 
 ul li {
     list-style-type: none;
-    margin-right: 30px;
+    margin-right: 10px;
     position: relative;
     top: 10px;
     display:none;
-    margin-left: 40px;
+    margin-left: 20px;
     color: white;
     
 }
+.active {
+  background-color: #ffd900;
+  color: black;
+  box-shadow: 0 0 10px #ffd900, 0 0 20px #ffd900;
+  font-weight: bold;
+  border-radius: 20px;
+  padding: 10px 15px;
+}
+
 ul li a {
     text-decoration: none;
     color: white;

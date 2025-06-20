@@ -1,0 +1,48 @@
+.scrollerWrapper {
+    overflow: hidden;
+    width: 90%;
+    background-color: #1f2937; 
+    padding: 20px 0;
+    border-radius: 10px;
+    margin: auto;
+}
+
+.scroller {
+    display: flex;
+    gap: 30px;
+    width: max-content;
+    animation: scroll-left 20s linear infinite;
+    will-change: transform;
+}
+
+.item {
+    flex: 0 0 auto;
+    background-image: linear-gradient(rgb(27, 88, 68), rgb(0, 184, 117));
+    color: #000;
+    padding: 10px 10px;
+    font-weight: bold;
+    font-size: 1.2rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    white-space: nowrap;
+    transition: transform 0.3s ease;
+    width: 200px;
+    height:200px;
+}
+
+.item:hover {
+    transform: scale(1.1);
+}
+
+.scrollerWrapper:hover .scroller {
+    animation-play-state: paused;
+}
+
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
