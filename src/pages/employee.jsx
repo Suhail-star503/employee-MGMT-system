@@ -2,25 +2,23 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../Navbar/navbar';
 import { useParams } from 'react-router-dom';
 import { db } from '../firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import {
+    doc, getDoc, collection, addDoc, query, where,
+    getDocs, updateDoc, deleteDoc
+} from 'firebase/firestore';
 import { toast } from 'react-toastify';
 import { formatTimestamp } from './employeedeshboard';
 import { ImProfile } from "react-icons/im";
-import { collection, addDoc, query, where, } from "firebase/firestore";
-import { getDocs, updateDoc } from "firebase/firestore";
-import { deleteDoc } from 'firebase/firestore';
 import Style from './style.module.css';
 
 export const deletetask = async (taskId, setTaskState) => {
     try {
         await deleteDoc(doc(db, "tasks", taskId));
+        setTaskState(prev => prev.filter(t => t.id !== taskId));
         toast.success("Task completed successfully!", {
             position: "top-center",
             theme: "dark"
         });
-
-        
-        setTaskState(prev => prev.filter(t => t.id !== taskId));
     } catch (error) {
         toast.error(`Error deleting task: ${error.message}`, {
             position: "top-center",
@@ -29,70 +27,72 @@ export const deletetask = async (taskId, setTaskState) => {
     }
 };
 
-
 const Employee = (props) => {
     const { id } = useParams();
     const [userdata, setUserdata] = useState(null);
-    const [loading, setLoading] = useState(true);
     const [salary, setsalary] = useState(0);
     const [task, settask] = useState([]);
 
-    useEffect(() => {
-        const fetchTasks = async () => {
-            try {
-                const q = query(
-                    collection(db, "tasks"),
-                    where("employeeId", "==", id),
-                    where("userId", "==", props.userId)
-                );
-                const querySnapshot = await getDocs(q);
-                const taskList = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                settask(taskList);
-            } catch (error) {
-                toast.error(`Error fetching tasks: ${error.message}`, {
-                    position: "top-center",
-                    theme: "dark"
-                });
-            }
-        };
+    const [loadingUser, setLoadingUser] = useState(true);
+    const [loadingTasks, setLoadingTasks] = useState(true);
+    const [loadingSalary, setLoadingSalary] = useState(true);
+    const [submittingTask, setSubmittingTask] = useState(false);
+    const [submittingSalary, setSubmittingSalary] = useState(false);
 
-        if (id && props.userId) {
-            fetchTasks();
+    const fetchTasks = async () => {
+        setLoadingTasks(true);
+        try {
+            const q = query(
+                collection(db, "tasks"),
+                where("employeeId", "==", id),
+                where("userId", "==", props.userId)
+            );
+            const querySnapshot = await getDocs(q);
+            const taskList = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+            settask(taskList);
+        } catch (error) {
+            toast.error(`Error fetching tasks: ${error.message}`, {
+                position: "top-center",
+                theme: "dark"
+            });
+        } finally {
+            setLoadingTasks(false);
         }
-    }, [id, props.userId]);
+    };
 
     const handletask = async (e) => {
         e.preventDefault();
-        const task = e.target.task.value;
-
+        const taskValue = e.target.task.value;
+        setSubmittingTask(true);
         try {
             await addDoc(collection(db, "tasks"), {
                 employeeId: id,
                 userId: props.userId,
-                task: task,
-
+                task: taskValue,
             });
-
-            toast.success("Task assigned successfully! Please reload the page to see the update.", {
+            e.target.reset();
+            toast.success("Task assigned successfully.", {
                 position: "top-center",
                 theme: "dark"
             });
-
-            e.target.reset(); // Clear the form input
+            await fetchTasks(); // Refresh task list without reload
         } catch (error) {
             toast.error(`Failed to assign task: ${error.message}`, {
                 position: "top-center",
                 theme: "dark"
             });
+        } finally {
+            setSubmittingTask(false);
         }
     };
 
     const handleset = async (e) => {
         e.preventDefault();
         const amount = e.target.amount.value;
+        setSubmittingSalary(true);
         try {
             const collectionRef = collection(db, "Salary");
             const q = query(
@@ -100,114 +100,100 @@ const Employee = (props) => {
                 where("companyId", "==", props.userId),
                 where("employee", "==", id)
             );
-
             const querySnapshot = await getDocs(q);
 
             if (!querySnapshot.empty) {
-                // Document exists, update the first one found
                 const existingDoc = querySnapshot.docs[0];
-                const docRef = existingDoc.ref;
-
-                await updateDoc(docRef, {
-                    amount: amount
-                });
-
-                toast.success("Salary updated successfully! Please reload the page to see the update.", {
+                await updateDoc(existingDoc.ref, { amount });
+                toast.success("Salary updated successfully.", {
                     position: "top-center",
                     theme: "dark"
                 });
-
             } else {
-                // No matching document, create a new one
                 await addDoc(collectionRef, {
                     companyId: props.userId,
                     employee: id,
-                    amount: amount
+                    amount
                 });
-
-                toast.success("Salary added successfully! Please reload the page to see the update.", {
+                toast.success("Salary added successfully.", {
                     position: "top-center",
                     theme: "dark"
                 });
             }
-               e.target.amount.value=''
+            setsalary(amount);
+            e.target.amount.value = '';
         } catch (e) {
             toast.error(`Error: ${e.message}`, {
                 position: "top-center",
                 theme: "dark"
             });
+        } finally {
+            setSubmittingSalary(false);
+        }
+    };
+
+    const fetchSalary = async () => {
+        setLoadingSalary(true);
+        try {
+            const q = query(
+                collection(db, "Salary"),
+                where("companyId", "==", props.userId),
+                where("employee", "==", id)
+            );
+            const querySnapshot = await getDocs(q);
+
+            if (!querySnapshot.empty) {
+                const salaryData = querySnapshot.docs[0].data();
+                setsalary(salaryData.amount);
+            } else {
+                setsalary(0);
+            }
+        } catch (error) {
+            toast.error(`Error fetching salary: ${error.message}`, {
+                position: "top-center",
+                theme: "dark"
+            });
+        } finally {
+            setLoadingSalary(false);
+        }
+    };
+
+    const fetchUser = async () => {
+        setLoadingUser(true);
+        try {
+            const docRef = doc(db, 'Users', id);
+            const docSnap = await getDoc(docRef);
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                setUserdata({
+                    name: data.name || 'N/A',
+                    email: data.email || 'N/A',
+                    date: data.createdAt || 'N/A',
+                    jobrole: data.jobrole || 'N/A',
+                });
+            } else {
+                toast.error('Document not found', {
+                    position: 'top-center',
+                    theme: 'dark',
+                });
+            }
+        } catch (error) {
+            toast.error(`Error fetching user: ${error.message}`, {
+                position: 'top-center',
+                theme: 'dark',
+            });
+        } finally {
+            setLoadingUser(false);
         }
     };
 
     useEffect(() => {
-        const fetchSalary = async () => {
-            try {
-                const collectionRef = collection(db, "Salary");
-                const q = query(
-                    collectionRef,
-                    where("companyId", "==", props.userId),
-                    where("employee", "==", id)
-                );
-                const querySnapshot = await getDocs(q);
-
-                if (!querySnapshot.empty) {
-                    const salaryData = querySnapshot.docs[0].data();
-                    setsalary(salaryData.amount);
-                } else {
-                    setsalary(0); // Default if not set
-                }
-            } catch (error) {
-                toast.error(`Error fetching salary: ${error.message}`, {
-                    position: "top-center",
-                    theme: "dark"
-                });
-            }
-        };
-
-        if (props.userId && id) {
+        if (id && props.userId) {
+            fetchTasks();
             fetchSalary();
+            fetchUser();
         }
-    }, [props.userId, id]);
-
-
-
-
-    useEffect(() => {
-        async function getSpecificDocument(userId) {
-            const docRef = doc(db, 'Users', userId);
-
-            try {
-                const docSnap = await getDoc(docRef);
-
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    setUserdata({
-                        name: data.name || 'N/A',
-                        email: data.email || 'N/A',
-                        date: data.createdAt || 'N/A',
-                        jobrole: data.jobrole || 'N/A',
-                    });
-
-                } else {
-                    toast.error('Document not found', {
-                        position: 'top-center',
-                        theme: 'dark',
-                    });
-                }
-            } catch (error) {
-                toast.error(`Error fetching user: ${error.message}`, {
-                    position: 'top-center',
-                    theme: 'dark',
-                });
-            } finally {
-                setLoading(false);
-            }
-        }
-
-        if (id) {
-            getSpecificDocument(id);
-        }
-    }, [id]);
+    }, [id, props.userId]);
 
     return (
         <div style={{ paddingBottom: "50px" }}>
@@ -217,65 +203,65 @@ const Employee = (props) => {
             </h1>
 
             <div className="container">
+                {/* User Info */}
                 <div className="row">
-                    <div
-                        className={`col-12 ${Style.all}`}
-                        style={{
-
-                            
-                            margin: 'auto',
-                            borderRadius: '0.8rem',
-                            padding: '20px',
-                            paddingTop: '30px',
-                            paddingBottom: '30px',
-                            marginTop: '30px',
-                            color: 'white',
-                        }}
-                    >
-                        {loading ? (
-                            <div style={{ textAlign: 'center', marginTop: '2rem' }}>
-                                <div className="spinner-border" role="status">
-                                    <span className="visually-hidden">Loading...</span>
-                                </div>
-                            </div>
+                    <div className={`col-12 ${Style.all}`} style={{ margin: 'auto', borderRadius: '0.8rem', padding: '30px', marginTop: '30px', color: 'white' }}>
+                        {loadingUser ? (
+                            <div className="spinner-border text-light" role="status"><span className="visually-hidden">Loading...</span></div>
                         ) : userdata ? (
                             <>
                                 <h3 style={{ textAlign: 'center', marginBottom: "20px" }}>{userdata.name} <ImProfile style={{ fontSize: "30px" }} /></h3>
-                                <h5 style={{ marginTop: "50px" }}>Email : {userdata.email}</h5>
-                                <h5 style={{ marginTop: "25px" }}>Job role : {userdata.jobrole}</h5>
-                                <h5 style={{ marginTop: "25px" }}>Joined : {formatTimestamp(userdata.date)}</h5>
-                                <h5 style={{ marginTop: "25px" }}>Salary : {salary}</h5>
+                                <h5>Email: {userdata.email}</h5>
+                                <h5>Job Role: {userdata.jobrole}</h5>
+                                <h5>Joined: {formatTimestamp(userdata.date)}</h5>
+                                {loadingSalary ? (
+                                    <div className="spinner-border text-light mt-2" role="status" />
+                                ) : (
+                                    <h5>Salary: {salary}</h5>
+                                )}
                             </>
                         ) : (
                             <p>No user data available.</p>
                         )}
                     </div>
-
                 </div>
+
+                {/* Salary Update Form */}
                 <div className="row">
-                    <div className={`col-10 ${Style.all}`} style={{ height: "200px", marginTop: "30px", borderRadius: "0.8rem", marginLeft: "auto", marginRight: "auto", paddingTop: "25px" }}>
-                        <h3 style={{ textAlign: "center", color: "white", marginBottom: "20px" }}>Set or update salary</h3>
+                    <div className={`col-10 ${Style.all}`} style={{ margin: "30px auto", borderRadius: "0.8rem", padding: "25px" }}>
+                        <h3 style={{ textAlign: "center", color: "white", marginBottom: "20px" }}>Set or Update Salary</h3>
                         <form onSubmit={handleset}>
-                            <input type="number" className="form-control" placeholder='Enter amount' name='amount' required />
-                            <button className='btn' type='submit' style={{ marginTop: "20px",backgroundColor:"black",color:"white" }}>Submit</button>
+                            <input type="number" className="form-control" name="amount" placeholder="Enter amount" required />
+                            <button className="btn mt-3" type="submit" disabled={submittingSalary}
+                                style={{ backgroundColor: "black", color: "white" }}>
+                                {submittingSalary ? "Updating..." : "Submit"}
+                            </button>
                         </form>
                     </div>
                 </div>
 
+                {/* Assign Task Form */}
                 <div className="row">
-                    <div className={`col-10 ${Style.all}`} style={{ height: "200px", marginTop: "30px", borderRadius: "0.8rem", marginLeft: "auto", marginRight: "auto", paddingTop: "25px" }}>
-                        <h3 style={{ textAlign: "center", color: "white", marginBottom: "20px" }}>Give task</h3>
+                    <div className={`col-10 ${Style.all}`} style={{ margin: "30px auto", borderRadius: "0.8rem", padding: "25px" }}>
+                        <h3 style={{ textAlign: "center", color: "white", marginBottom: "20px" }}>Assign Task</h3>
                         <form onSubmit={handletask}>
-                            <input type="text" className="form-control" placeholder='Task' name='task' required />
-                            <button className='btn' type='submit' style={{ marginTop: "20px",backgroundColor:"black",color:"white" }}>Submit</button>
+                            <input type="text" className="form-control" name="task" placeholder="Task" required />
+                            <button className="btn mt-3"
+                                type="submit" disabled={submittingTask}
+                                style={{ backgroundColor: "black", color: "white" }}>
+                                {submittingTask ? "Assigning..." : "Submit"}
+                            </button>
                         </form>
                     </div>
                 </div>
+                {/* Task List */}
                 <div className="row">
-                    <div className={`col-11 ${Style.all}`} style={{ marginTop: "30px", borderRadius: "0.8rem", marginLeft: "auto", marginRight: "auto", paddingTop: "25px", paddingBottom: "20px" }}>
-                        <h3 style={{ textAlign: "center", color: "white", marginBottom: "20px" }}>Given task</h3>
-                        {task.length === 0 ? (
-                            <p style={{ color: 'white', textAlign: 'center' }}>No task assigned.</p>
+                    <div className={`col-11 ${Style.all}`} style={{ margin: "30px auto", borderRadius: "0.8rem", padding: "25px" }}>
+                        <h3 style={{ textAlign: "center", color: "white", marginBottom: "20px" }}>Assigned Tasks</h3>
+                        {loadingTasks ? (
+                            <div className="spinner-border text-light" role="status"><span className="visually-hidden">Loading...</span></div>
+                        ) : task.length === 0 ? (
+                            <p style={{ color: 'white', textAlign: 'center' }}>No tasks assigned.</p>
                         ) : (
                             task.map((t, index) => (
                                 <div key={index} style={{
@@ -289,19 +275,14 @@ const Employee = (props) => {
                                     marginTop: "10px"
                                 }}>
                                     <p><b>{t.task}</b></p>
-                                    <button className='btn btn-warning' onClick={() => deletetask(t.id, settask)}>Mark it Complete</button>
+                                    <button className='btn btn-warning' onClick={() => deletetask(t.id, settask)}>Mark as Complete</button>
                                 </div>
                             ))
                         )}
-
-
                     </div>
                 </div>
-
-
             </div>
         </div>
     );
-};
-
+}
 export default Employee;
