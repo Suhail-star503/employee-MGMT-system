@@ -19,8 +19,9 @@ const Hero = (props) => {
             <div className="container" style={{ marginTop: "10px", display: "flex", paddingTop: "200px", justifyContent: "center", alignItems: "center" }}>
                 <div className="row gy-5">
                     <div className={`col-12 col-lg-6 ${Style.herotext}`}>
+                        
                         <h1>
-                            A platform that <span style={{ color: "#ffd900" }}>help employees and admin for manage thier work</span> that can saves a lot of time.
+                            A platform that <span style={{ color: "#ffd900" }}>helps employees and admins to manage their work easily</span> and saves a lot of time.
                         </h1>
                         <div style={{ display: "flex", gap: "20px", marginTop: "30px" }}>
                             <Link to={'/dashboard'}>
@@ -110,7 +111,7 @@ const Hero = (props) => {
                         }} />
                         <h2 style={{ color: "#ffd900" }}>Best platform in your busy life is now available with free of cost, Sign Up </h2>
                     </div>
-                    <div className="col col-11 col-lg-3" style={{ margin: "10px auto", display: "flex", justifyContent: "center", alignItems: "center"}}>
+                    <div className="col col-11 col-lg-3" style={{ margin: "10px auto", display: "flex", justifyContent: "center", alignItems: "center" }}>
                         <Link to={'/register'}>
                             <button className='btn' style={{ backgroundColor: '#ffd900', color: "black", fontWeight: "bold", padding: "20px 30px", borderRadius: "20px" }}>
                                 Sign Up
